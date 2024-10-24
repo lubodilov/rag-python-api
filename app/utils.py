@@ -7,9 +7,8 @@ import nltk
 
 from app.config import TEMP_DIR
 
-# Download necessary NLTK resources
 nltk.download('punkt', quiet=True)
-nltk.download('punkt_pickle', quiet=True)  # Added this line to fix the missing resource
+nltk.download('punkt_tab', quiet=True)  # Ensure all required NLTK data is downloaded
 
 def download_file_from_url(file_url):
     local_filename = file_url.split('/')[-1]
