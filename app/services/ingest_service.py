@@ -5,7 +5,7 @@ from sentence_transformers import SentenceTransformer
 from qdrant_client import QdrantClient
 from qdrant_client.http.models import Distance, VectorParams
 
-from app.utils import download_file_from_url, extract_text_from_file, chunk_text
+from app.utils import download_file_from_s3, extract_text_from_file, chunk_text
 from app.config import (
     QDRANT_HOST,
     QDRANT_PORT,
@@ -42,8 +42,8 @@ async def ingest_files(files: list, datasetId: str):
 
     for file_url in files:
         try:
-            # Download the file
-            file_path = download_file_from_url(file_url)
+            # Download the file using AWS SDK
+            file_path = download_file_from_s3(file_url)
 
             # Extract text
             text = extract_text_from_file(file_path)
