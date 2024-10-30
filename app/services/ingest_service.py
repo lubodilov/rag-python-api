@@ -3,7 +3,13 @@
 import uuid
 from sentence_transformers import SentenceTransformer
 from qdrant_client import QdrantClient
-from qdrant_client.http.models import Distance, VectorParams
+from qdrant_client.http.models import (
+    Distance,
+    VectorParams,
+    Filter,
+    FieldCondition,
+    MatchValue
+)
 
 from app.utils import download_file_from_s3, extract_text_from_file, chunk_text
 from app.config import (
@@ -95,3 +101,29 @@ async def ingest_files(files: list, datasetId: str):
         response['failedFiles'] = failed_files
 
     return response
+
+# New function to delete dataset
+async def delete_dataset(datasetId: str):
+    if not datasetId:
+        raise ValueError("datasetId is required")
+
+    # Create a filter to match the datasetId
+    delete_filter = Filter(
+        must=[
+            FieldCondition(
+                key="datasetId",
+                match=MatchValue(value=datasetId)
+            )
+        ]
+    )
+
+    # Perform deletion
+    qdrant_client.delete(
+        collection_name=QDRANT_COLLECTION_NAME,
+        points_selector=delete_filter,
+        wait=True
+    )
+
+    return {
+        "message": f"All data associated with datasetId '{datasetId}' has been deleted."
+    }
