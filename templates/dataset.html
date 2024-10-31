@@ -1,0 +1,21 @@
+<!-- templates/dataset.html -->
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Dataset: {{ datasetId }}</title>
+    <!-- Include Bootstrap CSS from CDN -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container">
+        <h1 class="mt-5">Dataset: {{ datasetId }}</h1>
+        <ul class="list-group mt-3">
+            {% for chunk in chunks %}
+                <li class="list-group-item">{{ chunk }}</li>
+            {% endfor %}
+        </ul>
+        <a href="/" class="btn btn-primary mt-3">Back to Datasets</a>
+    </div>
+</body>
+</html>

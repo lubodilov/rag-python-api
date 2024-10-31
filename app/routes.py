@@ -8,7 +8,7 @@ from fastapi.templating import Jinja2Templates
 
 router = APIRouter()
 
-# Templates for UI (if implemented later)
+# Initialize templates
 templates = Jinja2Templates(directory="templates")
 
 # Existing IngestRequest model and /ingest endpoint
@@ -41,7 +41,7 @@ async def retrieve(request: RetrieveRequest):
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
 
-# New DeleteRequest model and /delete endpoint
+# Existing DeleteRequest model and /delete endpoint
 class DeleteRequest(BaseModel):
     datasetId: str
 
@@ -52,3 +52,16 @@ async def delete_dataset(request: DeleteRequest):
         return result
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
+
+# New UI routes
+@router.get("/")
+async def read_datasets(request: Request):
+    # Get all unique datasetIds
+    dataset_ids = await ingest_service.get_dataset_ids()
+    return templates.TemplateResponse("index.html", {"request": request, "datasets": dataset_ids})
+
+@router.get("/dataset/{datasetId}")
+async def read_dataset(request: Request, datasetId: str):
+    # Retrieve chunks associated with the datasetId
+    chunks = await ingest_service.get_chunks_by_dataset(datasetId)
+    return templates.TemplateResponse("dataset.html", {"request": request, "datasetId": datasetId, "chunks": chunks})

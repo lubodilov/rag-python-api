@@ -102,7 +102,6 @@ async def ingest_files(files: list, datasetId: str):
 
     return response
 
-# New function to delete dataset
 async def delete_dataset(datasetId: str):
     if not datasetId:
         raise ValueError("datasetId is required")
@@ -127,3 +126,50 @@ async def delete_dataset(datasetId: str):
     return {
         "message": f"All data associated with datasetId '{datasetId}' has been deleted."
     }
+
+# New helper function to get all datasetIds
+async def get_dataset_ids():
+    # Retrieve all unique datasetIds from the collection
+    response = qdrant_client.scroll(
+        collection_name=QDRANT_COLLECTION_NAME,
+        scroll_filter=None,
+        with_payload=True,
+        limit=1000
+    )
+    dataset_ids = set()
+    for point in response[0]:
+        dataset_id = point.payload.get("datasetId")
+        if dataset_id:
+            dataset_ids.add(dataset_id)
+    return list(dataset_ids)
+
+# New helper function to get chunks by datasetId
+async def get_chunks_by_dataset(datasetId: str):
+    # Create a filter to match the datasetId
+    query_filter = Filter(
+        must=[
+            FieldCondition(
+                key="datasetId",
+                match=MatchValue(value=datasetId)
+            )
+        ]
+    )
+    # Scroll through all points with the given datasetId
+    all_chunks = []
+    scroll_id = None
+    while True:
+        response = qdrant_client.scroll(
+            collection_name=QDRANT_COLLECTION_NAME,
+            scroll_filter=query_filter,
+            with_payload=True,
+            limit=100,
+            offset=scroll_id
+        )
+        points, next_scroll_id = response
+        for point in points:
+            chunk = point.payload.get("chunk", "")
+            all_chunks.append(chunk)
+        if not next_scroll_id:
+            break
+        scroll_id = next_scroll_id
+    return all_chunks
