@@ -13,6 +13,7 @@ import json
 
 # Initialize NLTK
 nltk.download('punkt', quiet=True)
+nltk.download('punkt_tab', quiet=True)
 
 # Initialize S3 client
 s3_client = boto3.client(
