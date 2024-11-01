@@ -5,8 +5,16 @@ The RAG (Retrieval-Augmented Generation) Python API is designed to facilitate th
 **Note:** The API is already deployed and accessible at:
 
 ```
-http://
+http://178.128.247.20:8000/docs
 ```
+
+If you want to see the basic UI for displaying datasets and chunks it is accessible at:
+
+```
+http://178.128.247.20:8000/
+```
+
+
 
 ---
 
@@ -333,7 +341,7 @@ curl -X POST http://localhost:8000/delete \
 Open your web browser and navigate to:
 
 ```
-http://
+http://178.128.247.20:8000/
 ```
 
 - **View Datasets**: You should see a list of datasets (if any).
